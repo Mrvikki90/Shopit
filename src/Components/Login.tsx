@@ -15,20 +15,32 @@ const Login = () => {
     const [password , setPassword] = useState(""); 
 
     const navigate = useNavigate();
+ 
 
-    const firemodal = () => {  
-        Swal.fire({  
-          title: 'Success',  
-          text: 'Data has been added successfully.',   
-          confirmButtonColor: '#3085d6',   
-          confirmButtonText: 'ok'  
-        }).then((result) => {  
-            if( result.isConfirmed == true ) {
-                navigate('/');
-
-            }
-           })}; 
-    
+        interface data {
+            email : string,
+            name : string,
+            password : string,
+          }
+          
+            const handleLogin = async () =>{
+              let result= await fetch("http://localhost:8080/login",{
+                method : "POST",
+                body : JSON.stringify({email,password}),
+                headers : {
+                  "Content-type" : "application/json"
+                },
+              })
+          
+              const res:data[]  = await result.json();
+              if(res.length){
+                localStorage.setItem('user', JSON.stringify(result));
+                alert("login succesfully");
+                navigate('/adminpanel');
+              }else{
+                alert("wrong credentails");
+              }
+            };
     return (
      <>
         <Flex h="100vh" alignItems="center" justifyContent="center" bgColor='gray.500' >
@@ -41,7 +53,7 @@ const Login = () => {
                 <FormLabel>Password</FormLabel>
                 <Input type='password' name='password'
                 onChange={(e:any) => setPassword(e.target.value)}/>
-                <Button onClick={firemodal}
+                <Button onClick={handleLogin}
                     margin={4} colorScheme='teal' type='submit'>Login
                 </Button>
                 <Link to={'/signup'} > Dont Have An Account ? Click Here </Link>

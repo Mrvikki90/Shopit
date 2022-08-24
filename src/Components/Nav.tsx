@@ -10,6 +10,7 @@ const Nav = () => {
     </Box>
     <Spacer/>
     <ButtonGroup gap='2' marginRight={'5'}>
+    <Link to={'/wishlist'}><Image height='50'  src="wishlist.jpg" alt="png"/></Link>
      <Link to={'/login'}><Button colorScheme='teal' variant='outline'>Log In</Button></Link>
      <Link to={'/signup'}> <Button colorScheme='teal'>Sign Up</Button></Link>
     </ButtonGroup>

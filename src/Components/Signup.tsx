@@ -1,6 +1,6 @@
 import { Button, Flex, FormControl, FormLabel, Heading, Input } from '@chakra-ui/react'
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, Navigate, useNavigate } from 'react-router-dom'
 import Swal from 'sweetalert2';
 
 const Signup = () => {
@@ -10,34 +10,35 @@ const Signup = () => {
   const [name , setName] = useState("");
   const [email , setEmail] = useState("");
   const [password , setPassword] = useState(""); 
+  const [phone , setphone] = useState(""); 
 
   const handelLogin = async () => {
 
-    let result = await fetch("http://localhost:8080/save-users",{
+    let result = await fetch("http://localhost:8080/signup",{
       method : 'post',
-      body : JSON.stringify({name,email,password}),
+      body : JSON.stringify({name,email,password,phone}),
       headers : {
         'Content-Type' : 'application/json'
       },
     });
+ 
 
-    result = await result.json();
-    if (result) {
+    interface data {
+      email : string,
+      name : string,
+      password : string,
+      phone : string
+    }
+    
+
+    const res:data[]  = await result.json();
+    if(res){
+      alert("Rejestration succesfully")
       navigate('/');
+    }else{
+      alert("enter credentails");
     }}
 
-    const firemodal = () => {  
-      Swal.fire({  
-        title: 'Success',  
-        text: 'Data has been added successfully.',   
-        confirmButtonColor: '#3085d6',   
-        confirmButtonText: 'ok'  
-      }).then((result) => {  
-          if( result.isConfirmed == true ) {
-            handelLogin();
-          }
-         });
-      } 
 
   return (
     <> 
@@ -54,7 +55,10 @@ const Signup = () => {
             <FormLabel>Password</FormLabel>
             <Input type='password' 
                 onChange={(e:any) => setPassword(e.target.value)}/>
-            <Button onClick={firemodal}
+                  <FormLabel>Phone No</FormLabel>
+            <Input type='number' 
+                onChange={(e:any) => setphone(e.target.value)}/>
+            <Button onClick={handelLogin}
                 margin={4} colorScheme='teal' type='submit'>Sign Up
             </Button>
             <Link to={'/login'} > Already Have An Account ? Click Here </Link>

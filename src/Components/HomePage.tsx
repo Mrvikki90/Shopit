@@ -1,75 +1,86 @@
 import Nav from "./Nav";
 // import Products from './Apidata'
-import { useEffect, useState } from "react";
-import { Badge, Box ,Button,Flex,Grid,Image} from '@chakra-ui/react'
-import axios from "axios";
+import { Badge, Box, Button, Flex, Grid, Image } from "@chakra-ui/react";
+import { JsxEmit } from "typescript";
+import { FC } from "react";
 
-const HomePage = () => {
+export type typeD = {
+  id: number;
+  name: string;
+  price: string;
+  author: string;
+  img: string;
+};
 
-    interface typeD {
-        id: number,
-        name: string,
-        description: string,
-        price: string,
-        author : string,
-        img : string,
-        category : string
-    };   
-
-const [MenuData, setMenuData] = useState <typeD[]>([]);  
-
-// console.log(MenuData);
-
-useEffect(()=>{
-   getData();
-},[]);  
-
-let getData = async () => {
-    let url = "http://localhost:8080/users";
-    let response =  await axios.post<any>(url);
-    console.log(response.data);
-    setMenuData(response.data.products); 
+interface UserProps {
+  MenuData: typeD[];
 }
-// console.log(MenuData);
-return (  
-<>
-<Grid templateColumns='repeat(4,1fr)' gap={6}>
- {  MenuData.map((elem)=>{
-return (
+
+const handelCart = async (name: string, image: string) => {
+  const order = { name: name, image: image };
+  console.log(order);
+  const result = await fetch("http://localhost:8080/wishlist", {
+    method: "POST",
+    body: JSON.stringify(order),
+    headers: {
+      "Content-type": "application/json",
+    },
+  });
+
+  console.log(result);
+  return result;
+};
+
+const HomePage: FC<UserProps> = ({ MenuData }): JSX.Element => {
+  return (
     <>
-    <Box maxW='sm' borderWidth='1px' borderRadius='lg' overflow='hidden'>
-    <Image src={elem.img} alt={elem.img} maxHeight='min-content' />
-      <Box p='6'>
-        <Box display='flex' alignItems='baseline'>
-          <Badge borderRadius='full' px='2' colorScheme='teal'>
-            New
-          </Badge>
-        </Box>
-        <Box
-          mt='1'
-          fontWeight='semibold'
-          as='h4'
-          lineHeight='tight'
-          noOfLines={1}
-        >
-          {elem.author}
-        </Box>
-        <Box>
-          {elem.price}
-          <Box as='span' color='gray.600' fontSize='sm'>
-            / wk
-          </Box>
-        </Box>
-        <Button colorScheme='whatsapp'>Add to Wishlist </Button>
-      </Box>
-    </Box>
+      <Grid templateColumns="repeat(4,1fr)" gap={6}>
+        {MenuData.map((element, index) => {
+          return (
+            <Box
+              maxW="sm"
+              borderWidth="1px"
+              borderRadius="lg"
+              overflow="hidden"
+              key={index}
+            >
+              <Image
+                src={element.img}
+                alt={element.img}
+                maxHeight="min-content"
+              />
+              <Box p="6">
+                <Box display="flex" alignItems="baseline">
+                  <Badge borderRadius="full" px="2" colorScheme="teal">
+                    New
+                  </Badge>
+                </Box>
+                <Box
+                  mt="1"
+                  fontWeight="semibold"
+                  as="h4"
+                  lineHeight="tight"
+                  noOfLines={1}
+                >
+                  {element.author}
+                </Box>
+                <Box>
+                  <h4>Price {element.price} </h4>
+                  <Box as="span" color="gray.600" fontSize="sm"></Box>
+                </Box>
+                <Button
+                  onClick={() => handelCart(element.name, element.img)}
+                  colorScheme="whatsapp"
+                >
+                  Add to Wishlist{" "}
+                </Button>
+              </Box>
+            </Box>
+          );
+        })}
+      </Grid>
     </>
-)  
- })    
-}    
-</Grid>
+  );
+};
 
-</>
-)}
-
-export default HomePage
+export default HomePage;
